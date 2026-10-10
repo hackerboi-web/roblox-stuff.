@@ -1,3 +1,6 @@
+# Resources
+- licence: https://github.com/hackerboi-web/roblox-stuff./blob/main/LICENCE.md
+
 # Roblox Scripts
 - This Repo Contains Scripts For Roblox Games, And Will Soon Contain Scripts To Help Game Development. - Adding Them Soon!
 
