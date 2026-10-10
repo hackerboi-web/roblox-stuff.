@@ -2,60 +2,59 @@ Copyright (c) 2026 Hackerboi-Web
 Repository: https://github.com/hackerboi-web/roblox-stuff
 All Rights Reserved.
 
-PROPRIETARY ROBLOX CODE, CORE SYSTEMS, AND UI ASSET LICENSING AGREEMENT
+PROPRIETARY ROBLOX CODE, SYSTEMS, AND UI ASSET LICENSE
 
-Important Legal Notice — Read Carefully Before Proceeding:
-This Is A Legally Binding Agreement. By Downloading, Accessing, Viewing, Forking, Cloning, Executing, Injecting, Caching, Or Otherwise Utilizing Any Portion Of The Code, Scripts, Core Systems, User Interfaces, Assets, Or Related Materials, You Agree To Be Bound By The Terms Of This License.
+Important Notice — Please Read This Carefully Before Using The Software.
+This License Applies To The Code, Scripts, Systems, User Interfaces, Assets, And Related Materials In This Repository.
+By Downloading, Accessing, Viewing, Using, Modifying, Forking, Cloning, Executing, Injecting, Caching, Or Otherwise Utilizing Any Part Of The Software, You Agree To Be Bound By The Terms Below.
 
-1. Definitions
-"Software" Means The Code, Scripts, Systems, User Interfaces, Assets, And Related Materials Contained In This Repository.
-"Roblox Ecosystem" Means Roblox Studio, Roblox Games, Roblox Experiences, Developer Products, Gamepasses, And Associated Platforms Or Services.
-"Commercial Use" Means Any Use Intended For Revenue, Promotion, Distribution, Or Deployment For A Business, Studio, Group, Or Public Experience.
+1. License Scope
+The Software Is Protected By Copyright And May Only Be Used In Accordance With This License.
+This License Covers The Code, Scripts, Systems, Assets, User Interfaces, And Related Materials In This Repository.
 
 2. Permitted Use
-You May Use The Software Only If You Comply With One Of The Following Options:
+You May Use The Software For Personal Study, Testing, And Development Of Your Own Roblox Projects, Provided That You Comply With The Terms Of This License.
+You May Copy, Modify, Or Adapt The Code For Your Own Project Only If You Follow The Rules In This Agreement.
 
-- Requirement A: Free Use With Mandatory Attribution
-- Requirement B: Paid Per-Game Commercial Waiver
+3. Attribution Requirement
+If You Use The Software In A Roblox Experience, Public Project, Video, Or Other Visible Distribution, You Must Clearly And Prominently Credit "Hackerboi-Web" In A Visible And Understandable Way.
+This Credit Must Be Clearly Associated With The Project Or Experience Where The Software Is Used.
 
-3. Requirement A: Free Use With Mandatory Attribution
-You May Use The Software Without Payment Provided That You Clearly And Prominently Credit "Hackerboi-Web" In The Relevant Experience, Game, Video, Or Public Distribution Where The Software Is Visible Or Used.
+4. Commercial Use
+Commercial Use Is Allowed Only Under Prior Written Permission Or A Separate Paid License.
+A Paid License Covers Only The Specific Project Or Experience Stated In The Transaction And Does Not Grant Broad, Multi-Project, Group, Or Account-Wide Rights.
 
-4. Requirement B: Paid Per-Game Commercial Waiver
-You May Bypass The Attribution Requirement By Completing A Verified Payment To The Author For A Single Experience Or Project Only.
-This Payment Does Not Grant Rights For Multiple Games, Multiple Groups, Or Account-Wide Usage.
-A Separate Purchase Is Required For Each Experience Or Project.
-
-5. Commercial Restrictions
+5. Restrictions
 You May Not:
-- Sell, Lease, Repackage, Or Resell The Source Code Or Assets.
-- Distribute The Code As Your Own.
-- Use The Software Across Multiple Games Without Separate Authorization.
-- Remove Or Obscure Attribution When Required.
-- Claim Ownership Of The Original Work.
-- Modify The Software And Present It As Your Original Creation.
+- Sell, Lease, Repackage, Or Resell The Source Code, Files, Or Assets.
+- Distribute The Software As Your Own Original Work.
+- Remove Or Hide Required Credit When Required.
+- Use The Software In Multiple Projects Without Separate Authorization.
+- Claim Ownership Of The Original Code, Design, Or Systems.
+- Modify The Software And Present It As Your Own Creation.
 
-6. Warranty Disclaimer
-The Software Is Provided "As Is," Without Warranty Of Any Kind, Express Or Implied, Including Merchantability, Fitness For A Particular Purpose, Or Non-Infringement.
+6. Modifications
+You May Modify The Software For Your Own Use, But Any Modified Version Must Still Respect The Copyright And Attribution Requirements In This License.
+You May Not Publish, Distribute, Or Reuse A Modified Version As If It Were Your Own Original Work.
 
-7. Limitation Of Liability
-The Author Shall Not Be Liable For Any Direct, Indirect, Incidental, Special, Consequential, Or Punitive Damages Arising From Use Of The Software, Including Loss Of Data, Account Penalties, Moderation Actions, Revenue Loss, Or Disciplinary Actions By Roblox Or Related Platforms.
+7. Warranty Disclaimer
+The Software Is Provided "As Is," Without Warranty Of Any Kind, Either Express Or Implied, Including But Not Limited To Warranties Of Merchantability, Fitness For A Particular Purpose, Non-Infringement, Reliability, Security, Or Performance.
+The Author Makes No Guarantee That The Software Will Be Error-Free, Safe, Compatible, Or Suitable For Any Specific Purpose.
 
-8. Account And Platform Risk
-Use Of The Software Carries Risk, Including But Not Limited To Account Moderation, Game Restrictions, Removal Of Assets, Developer Platform Consequences, Or Other Actions Taken By Roblox Or Third Parties.
-You Accept These Risks And Are Solely Responsible For Any Resulting Consequences.
+8. Limitation Of Liability
+The Author Shall Not Be Liable For Any Direct, Indirect, Incidental, Special, Consequential, Or Punitive Damages Arising From The Use, Misuse, Modification, Deployment, Or Integration Of The Software.
+This Includes But Is Not Limited To Loss Of Data, Account Penalties, Moderation Actions, Revenue Loss, Platform Restrictions, Or Other Consequences That May Occur During Or After Use.
 
-9. Enforcement
-Any Violation Of This License May Result In Immediate Termination Of Your Rights To Use The Software, Removal Of Access, And Appropriate Legal Or Platform Action Where Applicable.
+9. Platform And Account Risk
+Roblox And Related Platforms May Enforce Rules, Moderation Actions, Restrictions, Or Other Measures That Affect Your Account, Experience, Assets, Or Project.
+By Using The Software, You Accept That These Risks Exist And That You Are Solely Responsible For Any Resulting Consequences.
 
 10. Termination
-If You Breach This Agreement, Your License Is Immediately Revoked.
-Any Continued Use After Revocation Is Prohibited.
+Violation Of This License Automatically Terminates Your Rights To Use The Software.
+Any Continued Use After Termination Is Prohibited.
 
 11. Contact
-For Licensing Inquiries, Commercial Use, Or Verification Requests, Contact The Author Through The Official Repository, Public Profile, Or Approved Channels Listed By Hackerboi-Web.
-
-This Agreement Is Governed By The Laws Applicable To The Copyright And Intellectual Property Rights Of The Author, And Any Dispute Shall Be Subject To The Jurisdiction Of The Applicable Legal Authority.
+For Licensing Questions, Commercial Use, Or Project Authorization, Please Contact The Author Through The Official Repository, Public Profile, Or Approved Channels Provided By Hackerboi-Web.
 
 All Rights Reserved.
 Copyright (c) 2026 Hackerboi-Web
