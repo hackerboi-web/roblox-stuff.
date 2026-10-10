@@ -16,5 +16,4 @@
 # To Use My Scripts You Must Either:
 - Credit Me In Some Way
 - Pay A One Time Payment For Use Without Credit
-
-# Any Use That Has No Credit And Has Not Been Paid For Could Cause Your Game And Or Account To Be Terminated.
+- refer to the licence for more details
