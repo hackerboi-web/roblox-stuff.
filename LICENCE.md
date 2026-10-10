@@ -1,8 +1,8 @@
 # Copyright (c) 2026 Hackerboi-Web
-# Repository: https://github.com/hackerboi-web/roblox-stuff
-# All Rights Reserved.
+- Repository: https://github.com/hackerboi-web/roblox-stuff
+- All Rights Reserved.
 
-# Usage Licence And Agreement
+Usage Licence And Agreement
 
 # Important Notice — Please Read This Carefully Before Using The Software.
 - This License Applies To The Code, Scripts, Systems, User Interfaces, Assets, And Related Materials In This Repository.
@@ -56,5 +56,5 @@ You May Not:
 # Section 11. Contact
 - For Licensing Questions, Commercial Use, Or Project Authorization, Please Contact The Author Through The Official Repository, Public Profile, Or Approved Channels Provided By Hackerboi-Web.
 
-# All Rights Reserved.
-# Copyright (c) 2026 Hackerboi-Web
+All Rights Reserved.
+Copyright (c) 2026 Hackerboi-Web
