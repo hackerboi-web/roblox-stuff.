@@ -57,4 +57,5 @@ You May Not:
 - For Licensing Questions, Commercial Use, Or Project Authorization, Please Contact The Author Through The Official Repository, Public Profile, Or Approved Channels Provided By Hackerboi-Web.
 
 All Rights Reserved.
+
 Copyright (c) 2026 Hackerboi-Web
