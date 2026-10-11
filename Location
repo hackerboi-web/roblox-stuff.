@@ -25,24 +25,20 @@ local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
 
--- Global telemetry environment data registry
 getgenv().Telemetry = {
     PositionString = "X: 0.00  Y: 0.00  Z: 0.00",
     OrientationString = "X: 0.0°  Y: 0.0°  Z: 0.0°",
     
-    -- Raw Vector3 metrics for background teleportation operations
     RawPosition = Vector3.new(0, 0, 0),
     RawOrientation = Vector3.new(0, 0, 0)
 }
 
--- Initialize real-time continuous background capture task
 RunService.Heartbeat:Connect(function()
     pcall(function()
         local character = LocalPlayer.Character
         if character then
             local rootPart = character:FindFirstChild("HumanoidRootPart")
             if rootPart then
-                -- 1. Process and cache positional updates
                 local currentPos = rootPart.Position
                 getgenv().Telemetry.RawPosition = currentPos
                 getgenv().Telemetry.PositionString = string.format(
@@ -50,7 +46,6 @@ RunService.Heartbeat:Connect(function()
                     currentPos.X, currentPos.Y, currentPos.Z
                 )
                 
-                -- 2. Process and cache rotational vector angles
                 local rx, ry, rz = rootPart.CFrame:ToOrientation()
                 local orientX = math.deg(rx)
                 local orientY = math.deg(ry)
