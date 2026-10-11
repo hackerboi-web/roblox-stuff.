@@ -13,7 +13,12 @@ local window = Rayfield:CreateWindow({
     }
 })
 
+window:CreateSection({ name = "Event" })
+window:CreateTab({ name = "Hatch", icon = 93364949241311 })
+window:CreateTab({ name = "Fight" })
 
+window:CreateSection({ name = "Rank" })
+window:CreateTab({ name = "Config" })
 
 task.spawn(function()
     while true do
