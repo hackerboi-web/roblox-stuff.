@@ -14,7 +14,7 @@ local window = Rayfield:CreateWindow({
 })
 
 window:CreateSection({ name = "Location" })
-local locationtab = window:CreateTab({ name = "Location", icon = 93364949241311 })
+local locationtab = window:CreateTab({ name = "Location", icon = map-pin })
 
 local syncing = locationtab:CreateProgress({ name = "Syncing Location", indeterminate = true })
 local syncing2 = locationtab:CreateProgress({ name = "Syncing Orientation", indeterminate = true })
