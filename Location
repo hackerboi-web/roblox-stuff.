@@ -20,6 +20,29 @@ local syncing = locationtab:CreateProgress({ name = "Syncing Location", indeterm
 
 local syncing2 = locationtab:CreateProgress({ name = "Syncing Orientation", indeterminate = true })
 
+locationtab:CreateDivider({ text = "misc" })
+
+local freeze = locationtab:CreateToggle({
+    name = "Freeze Values",
+    flag = "Freeze",
+    value = false,
+    callback = function(value)
+        -- freeze logic
+    end,
+})
+
+tab:CreateInput({
+    name = "Tp Location",
+    numeric = flase,
+    value = "",
+    placeholder = "Enter The Desired Location (Format: X Y Z)",
+    callback = function(text)
+        -- tp logic
+    end,
+})
+
+sprint:Set(false)
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
