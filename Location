@@ -17,35 +17,56 @@ window:CreateSection({ name = "Location" })
 local locationtab = window:CreateTab({ name = "Location", icon = 93364949241311 })
 
 local syncing = locationtab:CreateProgress({ name = "Syncing Location", indeterminate = true })
-
 local syncing2 = locationtab:CreateProgress({ name = "Syncing Orientation", indeterminate = true })
 
 locationtab:CreateDivider({ text = "misc" })
+
+local displayFrozen = false
 
 local freeze = locationtab:CreateToggle({
     name = "Freeze Values",
     flag = "Freeze",
     value = false,
     callback = function(value)
-        -- freeze logic
+        displayFrozen = value
     end,
 })
 
 locationtab:CreateInput({
     name = "Tp Location",
-    numeric = flase,
+    numeric = false,
     value = "",
     placeholder = "Enter The Desired Location (Format: X Y Z)",
     callback = function(text)
-        -- tp logic
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        
+        local x, y, z = text:match("^%s*([%-?%d%.]+)%s*[,%s]%s*([%-?%d%.]+)%s*[,%s]%s*([%-?%d%.]+)%s*$")
+        
+        if x and y and z then
+            local targetVector = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+            
+            pcall(function()
+                local character = LocalPlayer.Character
+                if character then
+                    local rootPart = character:FindFirstChild("HumanoidRootPart")
+                    if rootPart then
+                        rootPart.CFrame = CFrame.new(targetVector)
+                    end
+                end
+            end)
+        else
+            Rayfield:Notify({
+                Title = "Invalid Format",
+                Content = "Please use space or comma delimiters: X Y Z",
+                Duration = 3
+            })
+        end
     end,
 })
 
-sprint:Set(false)
-
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-
 local LocalPlayer = Players.LocalPlayer
 
 getgenv().Telemetry = {
@@ -84,5 +105,15 @@ RunService.Heartbeat:Connect(function()
     end)
 end)
 
-syncing2:Set(orientation)
-syncing:Set(location)
+task.spawn(function()
+    while task.wait(0.1) do
+        if not displayFrozen then
+            pcall(function()
+                syncing:SetText(getgenv().Telemetry.PositionString)
+            end)
+            pcall(function()
+                syncing2:SetText(getgenv().Telemetry.OrientationString)
+            end)
+        end
+    end
+end)
