@@ -3,4 +3,25 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/gen2"))()
 local window = Rayfield:CreateWindow({
     name = "D0ggie Hub",
     heartbeat = "https://www.sentivel.com/api/heartbeat/1e2866c9411ead3fd8fea11988d2985ac0828f5358550a6d689a774f73cc3f6d",
+    SidebarLayout = true, 
+    Theme = "Default",
+    ToggleUIKeybind = Enum.KeyCode.K,
+    ConfigurationSaving = {
+        Enabled = false,
+        FolderName = nil,
+        FileName = "Gen2Hub"
+    }
 })
+
+
+
+task.spawn(function()
+    while true do
+        if autoOpenEnabled then
+            pcall(function()
+                GiftEvent:InvokeServer("Large Enchant Bundle", 100)
+            end)
+        end
+        task.wait(0.5) -- Explicit 0.5-second delay between every iteration
+    end
+end)
