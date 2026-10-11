@@ -14,7 +14,7 @@ local window = Rayfield:CreateWindow({
 })
 
 window:CreateSection({ name = "Event" })
-local hatch = window:CreateTab({ name = "Hatch", icon = 93364949241311 })
+local hatch = window:CreateTab({ name = "Hatch", icon = egg })
 local fight = window:CreateTab({ name = "Fight" })
 
 window:CreateSection({ name = "Rank" })
