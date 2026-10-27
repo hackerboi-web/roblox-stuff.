@@ -1,0 +1,542 @@
+local function getService(name)
+	local svc = game:GetService(name)
+	return cloneref and cloneref(svc) or svc
+end
+
+local Players = getService("Players")
+local ReplicatedStorage = getService("ReplicatedStorage")
+local VirtualUser = getService("VirtualUser")
+local VirtualInputManager = getService("VirtualInputManager")
+
+local player = Players.LocalPlayer
+
+if getgenv and getgenv().D0ggieHubPS99 then
+	pcall(getgenv().D0ggieHubPS99)
+end
+
+local alive = true
+
+local Settings = {
+	AutoTap = false,
+	TapRange = 80,
+	TapsPerCycle = 6,
+	TapDelay = 0.15,
+	AutoHatch = false,
+	EggName = "",
+	HatchAmount = 1,
+	HatchDelay = 0.6,
+	AutoRebirth = false,
+	RebirthNumber = 0,
+	RebirthDelay = 5,
+	AutoRank = false,
+	RankDelay = 8,
+	AutoMastery = false,
+	MasteryDelay = 10,
+	AntiAfk = true,
+	AntiAfkInterval = 600,
+}
+
+local RemoteNames = {
+	Damage = "Breakables_PlayerDealDamage",
+	Egg = "Eggs_RequestPurchase",
+	Rebirth = "Rebirth_Request",
+	Rank = "Ranks_ClaimReward",
+	Mastery = "Mastery_Claim",
+}
+
+local Patterns = {
+	Damage = { "breakable", "damage" },
+	Egg = { "egg", "purchase" },
+	Rebirth = { "rebirth", "request" },
+	Rank = { "rank", "claim" },
+	Mastery = { "mastery" },
+}
+
+local resolved = {}
+
+local function networkFolder()
+	return ReplicatedStorage:FindFirstChild("Network")
+end
+
+local function isRemote(inst)
+	return inst:IsA("RemoteEvent") or inst:IsA("RemoteFunction")
+end
+
+local function resolve(key)
+	local cached = resolved[key]
+	if cached and cached.Parent then
+		return cached
+	end
+	local net = networkFolder()
+	if not net then
+		return nil
+	end
+	local exact = net:FindFirstChild(RemoteNames[key])
+	if exact and isRemote(exact) then
+		resolved[key] = exact
+		return exact
+	end
+	local best
+	for _, inst in ipairs(net:GetDescendants()) do
+		if isRemote(inst) then
+			local lowered = string.lower(inst.Name)
+			local hits = 0
+			for _, word in ipairs(Patterns[key]) do
+				if string.find(lowered, word, 1, true) then
+					hits += 1
+				end
+			end
+			if hits == #Patterns[key] then
+				best = inst
+				break
+			end
+		end
+	end
+	resolved[key] = best
+	return best
+end
+
+local function call(key, ...)
+	local remote = resolve(key)
+	if not remote then
+		return false, "remote not found"
+	end
+	local args = table.pack(...)
+	local ok, result = pcall(function()
+		if remote:IsA("RemoteFunction") then
+			return remote:InvokeServer(table.unpack(args, 1, args.n))
+		end
+		remote:FireServer(table.unpack(args, 1, args.n))
+		return true
+	end)
+	return ok, result
+end
+
+local function rootPart()
+	local char = player.Character
+	return char and char:FindFirstChild("HumanoidRootPart")
+end
+
+local function humanoid()
+	local char = player.Character
+	return char and char:FindFirstChildOfClass("Humanoid")
+end
+
+local function breakablesFolder()
+	local things = workspace:FindFirstChild("__THINGS")
+	return things and things:FindFirstChild("Breakables")
+end
+
+local function eggsFolder()
+	local things = workspace:FindFirstChild("__THINGS")
+	return things and things:FindFirstChild("Eggs")
+end
+
+local function nearestBreakables(range, limit)
+	local folder = breakablesFolder()
+	local root = rootPart()
+	if not folder or not root then
+		return {}
+	end
+	local found = {}
+	for _, model in ipairs(folder:GetChildren()) do
+		local ok, pivot = pcall(function()
+			return model:GetPivot().Position
+		end)
+		if ok then
+			local dist = (pivot - root.Position).Magnitude
+			if dist <= range then
+				table.insert(found, { name = model.Name, dist = dist })
+			end
+		end
+	end
+	table.sort(found, function(a, b)
+		return a.dist < b.dist
+	end)
+	local out = {}
+	for i = 1, math.min(limit, #found) do
+		out[i] = found[i].name
+	end
+	return out
+end
+
+local function nearestEggName()
+	local folder = eggsFolder()
+	local root = rootPart()
+	if not folder or not root then
+		return nil
+	end
+	local bestName, bestDist = nil, math.huge
+	for _, egg in ipairs(folder:GetChildren()) do
+		local ok, pivot = pcall(function()
+			return egg:GetPivot().Position
+		end)
+		if ok then
+			local dist = (pivot - root.Position).Magnitude
+			if dist < bestDist then
+				bestName, bestDist = egg.Name, dist
+			end
+		end
+	end
+	return bestName
+end
+
+local function currentRebirths()
+	local ok, value = pcall(function()
+		local save = require(ReplicatedStorage.Library.Client.Save).Get()
+		return save and save.Rebirths
+	end)
+	if ok and tonumber(value) then
+		return tonumber(value)
+	end
+	return nil
+end
+
+local function loop(flagName, delayKey, body)
+	task.spawn(function()
+		while alive do
+			if Settings[flagName] then
+				pcall(body)
+			end
+			task.wait(math.max(Settings[delayKey] or 1, 0.05))
+		end
+	end)
+end
+
+loop("AutoTap", "TapDelay", function()
+	for _, id in ipairs(nearestBreakables(Settings.TapRange, Settings.TapsPerCycle)) do
+		call("Damage", id)
+	end
+end)
+
+loop("AutoHatch", "HatchDelay", function()
+	local egg = Settings.EggName
+	if egg == "" then
+		egg = nearestEggName()
+	end
+	if egg then
+		call("Egg", egg, Settings.HatchAmount)
+	end
+end)
+
+loop("AutoRebirth", "RebirthDelay", function()
+	local target = Settings.RebirthNumber
+	if target <= 0 then
+		local current = currentRebirths()
+		target = current and (current + 1) or 1
+	end
+	call("Rebirth", tostring(target))
+end)
+
+loop("AutoRank", "RankDelay", function()
+	local ok = call("Rank")
+	for index = 1, 10 do
+		call("Rank", index)
+	end
+	return ok
+end)
+
+loop("AutoMastery", "MasteryDelay", function()
+	call("Mastery")
+end)
+
+local function doAntiAfk()
+	local hum = humanoid()
+	if hum then
+		hum:ChangeState(Enum.HumanoidStateType.Jumping)
+	end
+	local cam = workspace.CurrentCamera
+	local size = cam and cam.ViewportSize or Vector2.new(800, 600)
+	pcall(function()
+		VirtualUser:CaptureController()
+		VirtualUser:Button1Down(Vector2.new(size.X / 2, size.Y / 2), cam and cam.CFrame)
+		task.wait(0.05)
+		VirtualUser:Button1Up(Vector2.new(size.X / 2, size.Y / 2), cam and cam.CFrame)
+	end)
+	pcall(function()
+		VirtualInputManager:SendMouseButtonEvent(size.X / 2, size.Y / 2, 0, true, game, 0)
+		task.wait(0.05)
+		VirtualInputManager:SendMouseButtonEvent(size.X / 2, size.Y / 2, 0, false, game, 0)
+	end)
+end
+
+local idledConn = player.Idled:Connect(function()
+	if Settings.AntiAfk then
+		pcall(function()
+			VirtualUser:CaptureController()
+			VirtualUser:ClickButton2(Vector2.new())
+		end)
+	end
+end)
+
+task.spawn(function()
+	local waited = 0
+	while alive do
+		task.wait(1)
+		waited += 1
+		if Settings.AntiAfk and waited >= Settings.AntiAfkInterval then
+			waited = 0
+			pcall(doAntiAfk)
+		end
+	end
+end)
+
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+local Window = Rayfield:CreateWindow({
+	Name = "D0ggie Hub | PS99 Auto Rank",
+	LoadingTitle = "D0ggie Hub",
+	LoadingSubtitle = "PS99 Auto Rank",
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = "D0ggieHub",
+		FileName = "PS99AutoRank",
+	},
+	Discord = { Enabled = false },
+	KeySystem = false,
+})
+
+local FarmTab = Window:CreateTab("Farming", 4483362458)
+FarmTab:CreateSection("Breakables")
+
+FarmTab:CreateToggle({
+	Name = "Auto Tap Breakables",
+	CurrentValue = false,
+	Flag = "AutoTap",
+	Callback = function(v)
+		Settings.AutoTap = v
+	end,
+})
+
+FarmTab:CreateSlider({
+	Name = "Tap Range",
+	Range = { 20, 300 },
+	Increment = 5,
+	Suffix = " studs",
+	CurrentValue = Settings.TapRange,
+	Flag = "TapRange",
+	Callback = function(v)
+		Settings.TapRange = v
+	end,
+})
+
+FarmTab:CreateSlider({
+	Name = "Breakables Per Cycle",
+	Range = { 1, 20 },
+	Increment = 1,
+	Suffix = "",
+	CurrentValue = Settings.TapsPerCycle,
+	Flag = "TapsPerCycle",
+	Callback = function(v)
+		Settings.TapsPerCycle = v
+	end,
+})
+
+FarmTab:CreateSlider({
+	Name = "Tap Delay",
+	Range = { 0.05, 1 },
+	Increment = 0.05,
+	Suffix = "s",
+	CurrentValue = Settings.TapDelay,
+	Flag = "TapDelay",
+	Callback = function(v)
+		Settings.TapDelay = v
+	end,
+})
+
+FarmTab:CreateSection("Eggs")
+
+FarmTab:CreateToggle({
+	Name = "Auto Hatch",
+	CurrentValue = false,
+	Flag = "AutoHatch",
+	Callback = function(v)
+		Settings.AutoHatch = v
+	end,
+})
+
+FarmTab:CreateInput({
+	Name = "Egg Name (blank = nearest egg)",
+	PlaceholderText = "Egg name",
+	RemoveTextAfterFocusLost = false,
+	Callback = function(text)
+		Settings.EggName = (text:gsub("^%s+", ""):gsub("%s+$", ""))
+	end,
+})
+
+FarmTab:CreateSlider({
+	Name = "Eggs Per Hatch",
+	Range = { 1, 99 },
+	Increment = 1,
+	Suffix = "",
+	CurrentValue = Settings.HatchAmount,
+	Flag = "HatchAmount",
+	Callback = function(v)
+		Settings.HatchAmount = v
+	end,
+})
+
+FarmTab:CreateSlider({
+	Name = "Hatch Delay",
+	Range = { 0.1, 3 },
+	Increment = 0.1,
+	Suffix = "s",
+	CurrentValue = Settings.HatchDelay,
+	Flag = "HatchDelay",
+	Callback = function(v)
+		Settings.HatchDelay = v
+	end,
+})
+
+local ProgressTab = Window:CreateTab("Progression", 4483362458)
+ProgressTab:CreateSection("Rank")
+
+ProgressTab:CreateToggle({
+	Name = "Auto Rank (claim rewards)",
+	CurrentValue = false,
+	Flag = "AutoRank",
+	Callback = function(v)
+		Settings.AutoRank = v
+	end,
+})
+
+ProgressTab:CreateSlider({
+	Name = "Rank Claim Delay",
+	Range = { 2, 60 },
+	Increment = 1,
+	Suffix = "s",
+	CurrentValue = Settings.RankDelay,
+	Flag = "RankDelay",
+	Callback = function(v)
+		Settings.RankDelay = v
+	end,
+})
+
+ProgressTab:CreateSection("Rebirth")
+
+ProgressTab:CreateToggle({
+	Name = "Auto Rebirth",
+	CurrentValue = false,
+	Flag = "AutoRebirth",
+	Callback = function(v)
+		Settings.AutoRebirth = v
+	end,
+})
+
+ProgressTab:CreateSlider({
+	Name = "Rebirth Number (0 = next)",
+	Range = { 0, 50 },
+	Increment = 1,
+	Suffix = "",
+	CurrentValue = Settings.RebirthNumber,
+	Flag = "RebirthNumber",
+	Callback = function(v)
+		Settings.RebirthNumber = v
+	end,
+})
+
+ProgressTab:CreateSlider({
+	Name = "Rebirth Delay",
+	Range = { 2, 60 },
+	Increment = 1,
+	Suffix = "s",
+	CurrentValue = Settings.RebirthDelay,
+	Flag = "RebirthDelay",
+	Callback = function(v)
+		Settings.RebirthDelay = v
+	end,
+})
+
+ProgressTab:CreateSection("Mastery")
+
+ProgressTab:CreateToggle({
+	Name = "Auto Mastery",
+	CurrentValue = false,
+	Flag = "AutoMastery",
+	Callback = function(v)
+		Settings.AutoMastery = v
+	end,
+})
+
+ProgressTab:CreateSlider({
+	Name = "Mastery Delay",
+	Range = { 2, 120 },
+	Increment = 1,
+	Suffix = "s",
+	CurrentValue = Settings.MasteryDelay,
+	Flag = "MasteryDelay",
+	Callback = function(v)
+		Settings.MasteryDelay = v
+	end,
+})
+
+local MiscTab = Window:CreateTab("Misc", 4483362458)
+MiscTab:CreateSection("Anti AFK")
+
+MiscTab:CreateToggle({
+	Name = "Anti AFK (jump + click)",
+	CurrentValue = true,
+	Flag = "AntiAfk",
+	Callback = function(v)
+		Settings.AntiAfk = v
+	end,
+})
+
+MiscTab:CreateSlider({
+	Name = "Anti AFK Interval",
+	Range = { 60, 1200 },
+	Increment = 30,
+	Suffix = "s",
+	CurrentValue = Settings.AntiAfkInterval,
+	Flag = "AntiAfkInterval",
+	Callback = function(v)
+		Settings.AntiAfkInterval = v
+	end,
+})
+
+MiscTab:CreateSection("Remotes")
+
+local statusLabel = MiscTab:CreateLabel("Press Check Remotes")
+
+MiscTab:CreateButton({
+	Name = "Check Remotes",
+	Callback = function()
+		resolved = {}
+		local lines = {}
+		for _, key in ipairs({ "Damage", "Egg", "Rebirth", "Rank", "Mastery" }) do
+			local r = resolve(key)
+			table.insert(lines, key .. ": " .. (r and r.Name or "NOT FOUND"))
+		end
+		statusLabel:Set(table.concat(lines, "  |  "))
+		Rayfield:Notify({
+			Title = "Remote Check",
+			Content = table.concat(lines, "\n"),
+			Duration = 8,
+		})
+	end,
+})
+
+MiscTab:CreateButton({
+	Name = "Unload Hub",
+	Callback = function()
+		alive = false
+		pcall(function()
+			idledConn:Disconnect()
+		end)
+		Rayfield:Destroy()
+	end,
+})
+
+if getgenv then
+	getgenv().D0ggieHubPS99 = function()
+		alive = false
+		pcall(function()
+			idledConn:Disconnect()
+		end)
+		pcall(function()
+			Rayfield:Destroy()
+		end)
+	end
+end
+
+Rayfield:LoadConfiguration()
