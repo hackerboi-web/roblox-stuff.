@@ -1,13 +1,3 @@
---[[
-	Infinite Yield 6.4.2 - Rayfield Gen2 edition
-	All of the original command code is included unchanged. The classic GUI is replaced
-	by a Rayfield Gen2 window (https://sirius.menu/gen2). Edits to the original code:
-	  1. createPopup / notify queue their messages until the new interface is ready
-	  2. the prefix key opens the Rayfield window instead of the classic command bar
-	  3. server announcements are shown as a Rayfield popup
-	  4. the Rayfield interface block is added just before the update check
-	If Rayfield cannot be loaded, the classic interface is used automatically.
-]]
 if IY_LOADED and not _G.IY_DEBUG then
 	-- error("Infinite Yield is already running!", 0)
 	return
