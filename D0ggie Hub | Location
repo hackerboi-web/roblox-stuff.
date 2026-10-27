@@ -1,0 +1,118 @@
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/gen2"))()
+
+local window = Rayfield:CreateWindow({
+    name = "D0ggie Hub | Location",
+    SidebarLayout = true, 
+    Theme = "Default",
+    ToggleUIKeybind = Enum.KeyCode.K,
+    ConfigurationSaving = {
+        Enabled = false,
+        FolderName = nil,
+        FileName = "Gen2Hub"
+    }
+})
+
+window:CreateSection({ name = "Location" })
+local locationtab = window:CreateTab({ name = "Location", icon = map-pin })
+
+local syncing = locationtab:CreateProgress({ name = "Syncing Location", indeterminate = true })
+local syncing2 = locationtab:CreateProgress({ name = "Syncing Orientation", indeterminate = true })
+
+locationtab:CreateDivider({ text = "misc" })
+
+local displayFrozen = false
+
+local freeze = locationtab:CreateToggle({
+    name = "Freeze Values",
+    flag = "Freeze",
+    value = false,
+    callback = function(value)
+        displayFrozen = value
+    end,
+})
+
+locationtab:CreateInput({
+    name = "Tp Location",
+    numeric = false,
+    value = "",
+    placeholder = "Enter The Desired Location (Format: X Y Z)",
+    callback = function(text)
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        
+        local x, y, z = text:match("^%s*([%-?%d%.]+)%s*[,%s]%s*([%-?%d%.]+)%s*[,%s]%s*([%-?%d%.]+)%s*$")
+        
+        if x and y and z then
+            local targetVector = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+            
+            pcall(function()
+                local character = LocalPlayer.Character
+                if character then
+                    local rootPart = character:FindFirstChild("HumanoidRootPart")
+                    if rootPart then
+                        rootPart.CFrame = CFrame.new(targetVector)
+                    end
+                end
+            end)
+        else
+            Rayfield:Notify({
+                Title = "Invalid Format",
+                Content = "Please use space or comma delimiters: X Y Z",
+                Duration = 3
+            })
+        end
+    end,
+})
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+getgenv().Telemetry = {
+    PositionString = "X: 0.00  Y: 0.00  Z: 0.00",
+    OrientationString = "X: 0.0°  Y: 0.0°  Z: 0.0°",
+    
+    RawPosition = Vector3.new(0, 0, 0),
+    RawOrientation = Vector3.new(0, 0, 0)
+}
+
+RunService.Heartbeat:Connect(function()
+    pcall(function()
+        local character = LocalPlayer.Character
+        if character then
+            local rootPart = character:FindFirstChild("HumanoidRootPart")
+            if rootPart then
+                local currentPos = rootPart.Position
+                getgenv().Telemetry.RawPosition = currentPos
+                getgenv().Telemetry.PositionString = string.format(
+                    "X: %.2f  Y: %.2f  Z: %.2f", 
+                    currentPos.X, currentPos.Y, currentPos.Z
+                )
+                
+                local rx, ry, rz = rootPart.CFrame:ToOrientation()
+                local orientX = math.deg(rx)
+                local orientY = math.deg(ry)
+                local orientZ = math.deg(rz)
+                
+                getgenv().Telemetry.RawOrientation = Vector3.new(orientX, orientY, orientZ)
+                getgenv().Telemetry.OrientationString = string.format(
+                    "X: %.1f°  Y: %.1f°  Z: %.1f°", 
+                    orientX, orientY, orientZ
+                )
+            end
+        end
+    end)
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if not displayFrozen then
+            pcall(function()
+                syncing:SetText(getgenv().Telemetry.PositionString)
+            end)
+            pcall(function()
+                syncing2:SetText(getgenv().Telemetry.OrientationString)
+            end)
+        end
+    end
+end)
