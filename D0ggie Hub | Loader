@@ -1,18 +1,199 @@
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/gen2"))()
+local function getService(name)
+	local svc = game:GetService(name)
+	return cloneref and cloneref(svc) or svc
+end
 
-local window = Rayfield:CreateWindow({
-    name = "D0ggie Hub | Loader",
-    SidebarLayout = true, 
-    Theme = "Default",
-    ToggleUIKeybind = Enum.KeyCode.K,
-    ConfigurationSaving = {
-        Enabled = false,
-        FolderName = nil,
-        FileName = "Gen2Hub"
-    }
-})
+local StarterGui = getService("StarterGui")
 
-window:CreateSection({ name = "Games" })
-local gamestab = window:CreateTab({ name = "Games", icon = map-pin })
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
 
-games:CreateButton({ name = "Blox Fruits" })
+if getgenv then
+	if getgenv().D0ggieLoaderBusy then
+		return
+	end
+	getgenv().D0ggieLoaderBusy = true
+end
+
+local function release()
+	if getgenv then
+		getgenv().D0ggieLoaderBusy = nil
+	end
+end
+
+local BASE_URL = "https://raw.githubusercontent.com/hackerboi-web/roblox-stuff./refs/heads/main/"
+local FILE_PREFIX = "D0ggie Hub | "
+local FILE_EXTENSION = ""
+
+local Games = {
+	{
+		name = "Pet Simulator 99",
+		script = "PS99 Auto Rank",
+		universes = { 3317771874 },
+		places = { 8737899170 },
+	},
+	{
+		name = "Blox Fruits",
+		script = "Blox Fruits",
+		universes = { 994732206 },
+		places = { 2753915549, 4442272183, 7449423635, 85211729168715, 79091703265657, 100117331123089 },
+	},
+	{
+		name = "Adopt Me",
+		script = "Adopt Me Auto Farm",
+		universes = { 383310974 },
+		places = { 920587237 },
+	},
+	{
+		name = "Brookhaven RP",
+		script = "Brookhaven Utilities",
+		universes = { 1685831367 },
+		places = { 4924922222 },
+	},
+	{
+		name = "Murder Mystery 2",
+		script = "MM2 Utilities",
+		universes = { 66654135 },
+		places = { 142823291 },
+	},
+	{
+		name = "Grow a Garden",
+		script = "Grow a Garden Auto Farm",
+		universes = { 7436755782 },
+		places = { 126884695634066 },
+	},
+	{
+		name = "Steal a Brainrot",
+		script = "Steal a Brainrot Auto Farm",
+		universes = { 7709344486 },
+		places = { 96342491571673, 109983668079237 },
+	},
+	{
+		name = "RIVALS",
+		script = "Rivals Utilities",
+		universes = { 6035872082 },
+		places = { 17625359962 },
+	},
+	{
+		name = "Fisch",
+		script = "Fisch Auto",
+		universes = { 5750914919 },
+		places = { 16732694052 },
+	},
+	{
+		name = "Blade Ball",
+		script = "Blade Ball Auto",
+		universes = { 4777817887 },
+		places = { 13772394625 },
+	},
+	{
+		name = "Doors",
+		script = "Doors Utilities",
+		universes = { 2440500124 },
+		places = { 6516141723, 6839171747 },
+	},
+	{
+		name = "Tower of Hell",
+		script = "Tower of Hell Utilities",
+		universes = { 703124385 },
+		places = { 1962086868 },
+	},
+	{
+		name = "Arsenal",
+		script = "Arsenal Utilities",
+		universes = { 111958650 },
+		places = { 286090429 },
+	},
+	{
+		name = "King Legacy",
+		script = "King Legacy Auto",
+		universes = {},
+		places = { 4520749081, 6381829480, 5931540094 },
+	},
+	{
+		name = "99 Nights in the Forest",
+		script = "99 Nights Utilities",
+		universes = { 7326934954 },
+		places = { 79546208627805 },
+	},
+	{
+		name = "The Strongest Battlegrounds",
+		script = "Strongest Battlegrounds Utilities",
+		universes = { 3808081382 },
+		places = { 10449761463 },
+	},
+}
+
+local byUniverse, byPlace = {}, {}
+for _, entry in ipairs(Games) do
+	for _, id in ipairs(entry.universes) do
+		byUniverse[id] = entry
+	end
+	for _, id in ipairs(entry.places) do
+		byPlace[id] = entry
+	end
+end
+
+local function notify(title, text, duration)
+	pcall(function()
+		StarterGui:SetCore("SendNotification", {
+			Title = title,
+			Text = text,
+			Duration = duration or 6,
+		})
+	end)
+end
+
+local function urlEncode(str)
+	return (str:gsub("[^%w%-_%.~]", function(c)
+		return string.format("%%%02X", string.byte(c))
+	end))
+end
+
+local function scriptUrl(entry)
+	return BASE_URL .. urlEncode(FILE_PREFIX .. entry.script .. FILE_EXTENSION)
+end
+
+local entry = byPlace[game.PlaceId] or byUniverse[game.GameId]
+
+if not entry then
+	local info = string.format("PlaceId %d | GameId %d", game.PlaceId, game.GameId)
+	notify("D0ggie Hub", "Game not supported yet.\n" .. info, 8)
+	if setclipboard then
+		pcall(setclipboard, info)
+	end
+	warn("[D0ggie Hub] unsupported game - " .. info)
+	release()
+	return
+end
+
+local url = scriptUrl(entry)
+local okGet, source = pcall(function()
+	return game:HttpGet(url)
+end)
+
+if not okGet or type(source) ~= "string" or #source == 0 or source:sub(1, 3) == "404" then
+	notify("D0ggie Hub", entry.name .. ": script file not found on GitHub.", 8)
+	warn("[D0ggie Hub] could not fetch " .. url)
+	release()
+	return
+end
+
+local fn, loadErr = loadstring(source)
+if not fn then
+	notify("D0ggie Hub", entry.name .. ": script failed to compile.", 8)
+	warn("[D0ggie Hub] compile error: " .. tostring(loadErr))
+	release()
+	return
+end
+
+notify("D0ggie Hub", "Loading " .. entry.name .. "...", 4)
+
+local okRun, runErr = pcall(fn)
+if not okRun then
+	notify("D0ggie Hub", entry.name .. ": script errored while running.", 8)
+	warn("[D0ggie Hub] runtime error: " .. tostring(runErr))
+end
+
+release()
