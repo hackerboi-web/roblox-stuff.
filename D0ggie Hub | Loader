@@ -1,0 +1,18 @@
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/gen2"))()
+
+local window = Rayfield:CreateWindow({
+    name = "D0ggie Hub | Loader",
+    SidebarLayout = true, 
+    Theme = "Default",
+    ToggleUIKeybind = Enum.KeyCode.K,
+    ConfigurationSaving = {
+        Enabled = false,
+        FolderName = nil,
+        FileName = "Gen2Hub"
+    }
+})
+
+window:CreateSection({ name = "Games" })
+local gamestab = window:CreateTab({ name = "Games", icon = map-pin })
+
+games:CreateButton({ name = "Blox Fruits" })
